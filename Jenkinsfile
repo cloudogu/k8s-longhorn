@@ -13,8 +13,6 @@ repositoryName = "k8s-longhorn"
 productionReleaseBranch = "main"
 
 node('docker') {
-    K3d k3d = new K3d(this, "${WORKSPACE}", "${WORKSPACE}/k3d", env.PATH)
-
     timestamps {
         catchError {
             timeout(activity: false, time: 60, unit: 'MINUTES') {
@@ -33,32 +31,8 @@ node('docker') {
                                         sh "kubeval manifests/longhorn.yaml --ignore-missing-schemas"
                                     }
                 }
-
-//                stage('Set up k3d cluster') {
-//                    k3d.startK3d()
-//                }
-//                stage('Install kubectl') {
-//                    k3d.installKubectl()
-//                }
-//
-//                stage('Test etcd') {
-//                    k3d.kubectl("apply -f manifests/etcd.yaml")
-//                    // Sleep because it takes time for the controller to create the resource. Without it would end up
-//                    // in error "no matching resource found when run the wait command"
-//                    sleep(20)
-//                    k3d.kubectl("wait --for=condition=ready pod -l statefulset.kubernetes.io/pod-name=etcd-0 --timeout=300s")
-//                    k3d.kubectl("run etcd-client --restart='Never' --image docker.io/bitnami/etcd:3.5.2-debian-10-r0 --env ETCDCTL_API=2 --env ETCDCTL_ENDPOINTS=\"http://etcd.default.svc.cluster.local:4001\" --command -- sleep infinity")
-//                    sleep(20)
-//                    k3d.kubectl("wait --for=condition=ready pod -l run=etcd-client --timeout=300s")
-//                    k3d.kubectl("exec -it etcd-client -- etcdctl set key value")
-//                    k3d.kubectl("exec -it etcd-client -- etcdctl get key")
-//                }
             }
         }
-
-//        stage('Remove k3d cluster') {
-//            k3d.deleteK3d()
-//        }
 
         stage('Release') {
             stageAutomaticRelease()

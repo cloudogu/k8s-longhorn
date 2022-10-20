@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+Initial:
 - Add longhorn yaml manifest with additional images #1
+- Use makefiles version 7.0.1
+- Use jenkins pipeline to validate yaml
 
 
