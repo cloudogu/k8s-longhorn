@@ -13,7 +13,7 @@ generate-release-resource: $(K8S_RESOURCE_TEMP_FOLDER)
 	@cp manifests/longhorn.yaml ${K8S_RESOURCE_TEMP_YAML}
 
 
-.PHONY: etcd-release
-setup-release: ## Interactively starts the release workflow.
+.PHONY: longhorn-release
+longhorn-release: ## Interactively starts the release workflow.
 	@echo "Starting git flow release..."
 	@build/make/release.sh longhorn

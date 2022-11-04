@@ -54,10 +54,10 @@ void stageAutomaticRelease() {
         }
 
         stage('Push to Registry') {
-            GString targetEtcdResourceYaml = "target/make/k8s/${repositoryName}_${releaseVersion}.yaml"
+            GString targetLonghornResourceYaml = "target/make/k8s/${repositoryName}_${releaseVersion}.yaml"
 
             DoguRegistry registry = new DoguRegistry(this)
-            registry.pushK8sYaml(targetEtcdResourceYaml, repositoryName, "k8s", "${releaseVersion}")
+            registry.pushK8sYaml(targetLonghornResourceYaml, repositoryName, "k8s", "${releaseVersion}")
         }
 
         stage('Add Github-Release') {
