@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.3.1-3] - 2022-11-07
 ### Changed
 - Update `ces-build-lib` to version 1.58.0 #3
 
