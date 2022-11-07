@@ -6,7 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.3.1-1]
+## [v1.3.1-2] - 2022-11-07
+Re-Release because release workflow for version 1.3.1-1 was broken.
+
+## [1.3.1-1] - 2022-11-07
 ### Added
 - Add longhorn yaml manifest with additional images #1
 - Use makefiles version 7.0.1
