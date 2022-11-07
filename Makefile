@@ -1,5 +1,5 @@
 ARTIFACT_ID=k8s-longhorn
-VERSION=1.3.1-3
+VERSION=1.3.1-4
 MAKEFILES_VERSION=7.0.1
 
 include build/make/variables.mk
