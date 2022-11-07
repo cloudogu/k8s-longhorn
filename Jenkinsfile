@@ -43,7 +43,8 @@ node('docker') {
 void stageAutomaticRelease() {
     if (gitflow.isReleaseBranch()) {
         Makefile makefile = new Makefile(this)
-        String releaseVersion = makefile.getVersion()
+        String releaseVersion = git.getSimpleBranchName()
+        String registryVersion = makefile.getVersion()
 
         stage('Finish Release') {
             gitflow.finishRelease(releaseVersion, productionReleaseBranch)
@@ -54,10 +55,10 @@ void stageAutomaticRelease() {
         }
 
         stage('Push to Registry') {
-            GString targetLonghornResourceYaml = "target/make/k8s/${repositoryName}_${releaseVersion}.yaml"
+            GString targetLonghornResourceYaml = "target/make/k8s/${repositoryName}_${registryVersion}.yaml"
 
             DoguRegistry registry = new DoguRegistry(this)
-            registry.pushK8sYaml(targetLonghornResourceYaml, repositoryName, "k8s", "${releaseVersion}")
+            registry.pushK8sYaml(targetLonghornResourceYaml, repositoryName, "k8s", "${registryVersion}")
         }
 
         stage('Add Github-Release') {
