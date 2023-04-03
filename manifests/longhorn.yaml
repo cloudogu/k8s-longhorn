@@ -71,6 +71,7 @@ metadata:
     app.kubernetes.io/version: v1.3.1
 data:
   default-setting.yaml: |-
+    node-down-pod-deletion-policy: delete-both-statefulset-and-deployment-pod
 ---
 # Source: longhorn/templates/storageclass.yaml
 apiVersion: v1
