@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## Changed
+- Update longhorn to 1.4.1
+- Set `Pod Deletion Policy When Node is Down` configuration to `delete-both-statefulset-and-deployment-pod`
+  so that longhorn will delete stuck pods on a node failure #6
+
+## Fixed
+- Use correct annotations for the additional ces images #5
 
 ## [v1.3.1-4] - 2022-11-07
 ## Fixed
