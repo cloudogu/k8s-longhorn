@@ -19,6 +19,7 @@ metadata:
     k8s-ces-additional-image-12: "longhornio/longhorn-ui:v1.4.1"
     k8s-ces-additional-image-13: "longhornio/support-bundle-kit:v0.0.19"
 ---
+# Source: deploy/podsecuritypolicy.yaml
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
