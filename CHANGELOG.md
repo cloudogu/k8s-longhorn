@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.4.1-1] - 2023-04-05
+## Changed
+- Update longhorn to 1.4.1
+- Set `Pod Deletion Policy When Node is Down` configuration to `delete-both-statefulset-and-deployment-pod`
+  so that longhorn will delete stuck pods on a node failure #6
+
+## Fixed
+- Use correct annotations for the additional CES images #5
+
 ## [v1.3.1-4] - 2022-11-07
 ## Fixed
 - Use correct release versions in jenkinsfile #3
