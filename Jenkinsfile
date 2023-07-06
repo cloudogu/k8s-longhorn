@@ -34,9 +34,7 @@ node('docker') {
             }
         }
 
-        stage('Release') {
-            stageAutomaticRelease()
-        }
+        stageAutomaticRelease()
     }
 }
 
@@ -53,7 +51,7 @@ void stageAutomaticRelease() {
         }
 
         stage('Generate release resource') {
-            make'generate-release-resource'
+            make 'generate-release-resource'
         }
 
         stage('Push to Registry') {
