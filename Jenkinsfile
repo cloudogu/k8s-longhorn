@@ -1,5 +1,5 @@
 #!groovy
-@Library('github.com/cloudogu/ces-build-lib@1.58.0')
+@Library('github.com/cloudogu/ces-build-lib@1.65.0')
 import com.cloudogu.ces.cesbuildlib.*
 
 git = new Git(this, "cesmarvin")
@@ -45,6 +45,8 @@ void stageAutomaticRelease() {
         Makefile makefile = new Makefile(this)
         String releaseVersion = git.getSimpleBranchName()
         String registryVersion = makefile.getVersion()
+        String registryNamespace = "k8s"
+        String registryUrl = "registry.cloudogu.com"
 
         stage('Finish Release') {
             gitflow.finishRelease(releaseVersion, productionReleaseBranch)
@@ -58,7 +60,22 @@ void stageAutomaticRelease() {
             GString targetLonghornResourceYaml = "target/make/k8s/${repositoryName}_${registryVersion}.yaml"
 
             DoguRegistry registry = new DoguRegistry(this)
-            registry.pushK8sYaml(targetLonghornResourceYaml, repositoryName, "k8s", "${registryVersion}")
+            registry.pushK8sYaml(targetLonghornResourceYaml, repositoryName, registryNamespace, "${registryVersion}")
+        }
+
+        stage('Push Helm chart to Harbor') {
+            new Docker(this)
+                    .image("golang:1.20")
+                    .mountJenkinsUser()
+                    .inside("--volume ${WORKSPACE}:/${repositoryName} -w /${repositoryName}")
+                            {
+                                make 'etcd-k8s-helm-package-release'
+
+                                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'harborhelmchartpush', usernameVariable: 'HARBOR_USERNAME', passwordVariable: 'HARBOR_PASSWORD']]) {
+                                    sh ".bin/helm registry login ${registryUrl} --username '${HARBOR_USERNAME}' --password '${HARBOR_PASSWORD}'"
+                                    sh ".bin/helm push target/make/k8s/helm/${repositoryName}-${releaseVersion}.tgz oci://${registryUrl}/${registryNamespace}"
+                                }
+                            }
         }
 
         stage('Add Github-Release') {
