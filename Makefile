@@ -27,7 +27,23 @@ longhorn-release: ## Interactively starts the release workflow.
 HELM_TEMPLATE_DIR=$(K8S_RESOURCE_TEMP_FOLDER)/helm/templates
 
 .PHONY: longhorn-k8s-helm-generate
-longhorn-k8s-helm-generate: k8s-helm-generate
+longhorn-k8s-helm-generate: k8s-helm-generate fix-service-errors change-helm-prefix
+
+ENGINE_MANAGER_SERVICE="${HELM_TEMPLATE_DIR}/engine-manager.yaml"
+REPLICA_MANAGER_SERVICE="${HELM_TEMPLATE_DIR}/replica-manager.yaml"
+
+.PHONY: fix-service-errors
+fix-service-errors:
+	@echo "Fix wrong service type creation"
+	@sed -i 's/type: {{ .Values.engineManager.type }}/clusterIP: None/' "${ENGINE_MANAGER_SERVICE}"
+	@sed -i 's/	{{- .Values.engineManager.ports | toYaml | nindent 2 -}}//' "${ENGINE_MANAGER_SERVICE}"
+	@sed -i 's/  ports://' "${ENGINE_MANAGER_SERVICE}"
+	@sed -i 's/type: {{ .Values.engineManager.type }}/clusterIP: None/' "${REPLICA_MANAGER_SERVICE}"
+	@sed -i 's/	{{- .Values.replicaManager.ports | toYaml | nindent 2 -}}//' "${REPLICA_MANAGER_SERVICE}"
+	@sed -i 's/  ports://' "${REPLICA_MANAGER_SERVICE}"
+
+.PHONY: change-helm-prefix
+change-helm-prefix:
 	@echo "Replacing generated Helm resource names with previous values"
 	@for file in "${HELM_TEMPLATE_DIR}"/*.yaml ; do \
     	    sed -i 's/{{ include "helm.fullname" . }}/longhorn/' $${file}; \
