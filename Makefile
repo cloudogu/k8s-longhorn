@@ -27,13 +27,14 @@ longhorn-release: ## Interactively starts the release workflow.
 HELM_TEMPLATE_DIR=$(K8S_RESOURCE_TEMP_FOLDER)/helm/templates
 
 .PHONY: longhorn-k8s-helm-generate
-longhorn-k8s-helm-generate: k8s-helm-generate fix-service-errors change-helm-prefix
+longhorn-k8s-helm-generate: k8s-helm-generate fix-headless-services change-helm-prefix
 
 ENGINE_MANAGER_SERVICE="${HELM_TEMPLATE_DIR}/engine-manager.yaml"
 REPLICA_MANAGER_SERVICE="${HELM_TEMPLATE_DIR}/replica-manager.yaml"
 
-.PHONY: fix-service-errors
-fix-service-errors:
+# Helmify generates a regular service with DNS load balancing for headless services where clusterIP: none
+.PHONY: fix-headless-services
+fix-headless-services:
 	@echo "Fix wrong service type creation"
 	@sed -i 's/type: {{ .Values.engineManager.type }}/clusterIP: None/' "${ENGINE_MANAGER_SERVICE}"
 	@sed -i 's/	{{- .Values.engineManager.ports | toYaml | nindent 2 -}}//' "${ENGINE_MANAGER_SERVICE}"
