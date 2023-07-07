@@ -20,9 +20,6 @@ longhorn-release: ## Interactively starts the release workflow.
 	@echo "Starting git flow release..."
 	@build/make/release.sh longhorn
 
-
-# These targets wrap the helm targets because helmify always adds the project name as prefix to all resources.
-# This behaviour leads to wrong resource names because the original resource names do not start with the project name prefix.
 HELM_TEMPLATE_DIR=$(K8S_RESOURCE_TEMP_FOLDER)/helm/templates
 
 .PHONY: longhorn-k8s-helm-generate
@@ -35,7 +32,7 @@ delete-longhorn-namespace:
 .PHONY: longhorn-k8s-helm-apply
 longhorn-k8s-helm-apply: longhorn-k8s-helm-generate ## Generates and installs the helm chart.
 	@echo "Apply generated helm chart"
-	@${BINARY_HELM} upgrade -i ${ARTIFACT_ID} ${K8S_HELM_TARGET}
+	@${BINARY_HELM} upgrade -i ${ARTIFACT_ID} ${K8S_HELM_TARGET} --namespace ${NAMESPACE} --create-namespace
 
 .PHONY: longhorn-k8s-helm-package-release
 longhorn-k8s-helm-package-release: longhorn-k8s-helm-generate ## Generates and packages the helm chart with release urls.
