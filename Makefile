@@ -39,7 +39,7 @@ fix-headless-services:
 	@sed -i 's/type: {{ .Values.engineManager.type }}/clusterIP: None/' "${ENGINE_MANAGER_SERVICE}"
 	@sed -i 's/	{{- .Values.engineManager.ports | toYaml | nindent 2 -}}//' "${ENGINE_MANAGER_SERVICE}"
 	@sed -i 's/  ports://' "${ENGINE_MANAGER_SERVICE}"
-	@sed -i 's/type: {{ .Values.engineManager.type }}/clusterIP: None/' "${REPLICA_MANAGER_SERVICE}"
+	@sed -i 's/type: {{ .Values.replicaManager.type }}/clusterIP: None/' "${REPLICA_MANAGER_SERVICE}"
 	@sed -i 's/	{{- .Values.replicaManager.ports | toYaml | nindent 2 -}}//' "${REPLICA_MANAGER_SERVICE}"
 	@sed -i 's/  ports://' "${REPLICA_MANAGER_SERVICE}"
 
