@@ -15,7 +15,6 @@ include build/make/k8s.mk
 generate-release-resource: $(K8S_RESOURCE_TEMP_FOLDER)
 	@cp manifests/longhorn.yaml ${K8S_RESOURCE_TEMP_YAML}
 
-
 .PHONY: longhorn-release
 longhorn-release: ## Interactively starts the release workflow.
 	@echo "Starting git flow release..."
@@ -27,28 +26,11 @@ longhorn-release: ## Interactively starts the release workflow.
 HELM_TEMPLATE_DIR=$(K8S_RESOURCE_TEMP_FOLDER)/helm/templates
 
 .PHONY: longhorn-k8s-helm-generate
-longhorn-k8s-helm-generate: k8s-helm-generate fix-headless-services change-helm-prefix
+longhorn-k8s-helm-generate: k8s-helm-generate delete-longhorn-namespace
 
-ENGINE_MANAGER_SERVICE="${HELM_TEMPLATE_DIR}/engine-manager.yaml"
-REPLICA_MANAGER_SERVICE="${HELM_TEMPLATE_DIR}/replica-manager.yaml"
-
-# Helmify generates a regular service with DNS load balancing for headless services where clusterIP: none
-.PHONY: fix-headless-services
-fix-headless-services:
-	@echo "Fix wrong service type creation"
-	@sed -i 's/type: {{ .Values.engineManager.type }}/clusterIP: None/' "${ENGINE_MANAGER_SERVICE}"
-	@sed -i 's/	{{- .Values.engineManager.ports | toYaml | nindent 2 -}}//' "${ENGINE_MANAGER_SERVICE}"
-	@sed -i 's/  ports://' "${ENGINE_MANAGER_SERVICE}"
-	@sed -i 's/type: {{ .Values.replicaManager.type }}/clusterIP: None/' "${REPLICA_MANAGER_SERVICE}"
-	@sed -i 's/	{{- .Values.replicaManager.ports | toYaml | nindent 2 -}}//' "${REPLICA_MANAGER_SERVICE}"
-	@sed -i 's/  ports://' "${REPLICA_MANAGER_SERVICE}"
-
-.PHONY: change-helm-prefix
-change-helm-prefix:
-	@echo "Replacing generated Helm resource names with previous values"
-	@for file in "${HELM_TEMPLATE_DIR}"/*.yaml ; do \
-    	    sed -i 's/{{ include "helm.fullname" . }}/longhorn/' $${file}; \
-    done
+.PHONY: delete-longhorn-namespace
+delete-longhorn-namespace:
+	@sed -i '0,/^# Source: deploy\/podsecuritypolicy.yaml$//d' ${HELM_TEMPLATE_DIR}/${ARTIFACT_ID}_${VERSION}.yaml
 
 .PHONY: longhorn-k8s-helm-apply
 longhorn-k8s-helm-apply: longhorn-k8s-helm-generate ## Generates and installs the helm chart.
