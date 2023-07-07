@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.4.1-2] - 2023-07-07
+### Added
+- Add additional helm chart as release artifact #8
+
 ## [v1.4.1-1] - 2023-04-05
 ## Changed
 - Update longhorn to 1.4.1
