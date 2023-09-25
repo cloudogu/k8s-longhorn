@@ -1,0 +1,4 @@
+backup:
+  target:
+    secretName: minio-secret
+    url: s3://longhorn@dummyregion/
