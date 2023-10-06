@@ -1,5 +1,5 @@
 #!groovy
-@Library('github.com/cloudogu/ces-build-lib@1.65.0')
+@Library('github.com/cloudogu/ces-build-lib@1.67.0')
 import com.cloudogu.ces.cesbuildlib.*
 
 git = new Git(this, "cesmarvin")
@@ -21,14 +21,13 @@ node('docker') {
                     make 'clean'
                 }
 
-                kubevalImage = "cytopia/kubeval:0.15"
-
+                helmImage = "alpine/helm:3.13.0"
                 stage("Lint k8s Resources") {
                     new Docker(this)
-                            .image(kubevalImage)
-                            .inside("-v ${WORKSPACE}/manifests/:/data -t --entrypoint=")
+                            .image(helmImage)
+                            .inside("-v ${WORKSPACE}/:/data -t --entrypoint=")
                                     {
-                                        sh "kubeval manifests/longhorn.yaml --ignore-missing-schemas"
+                                        sh "helm lint /data/k8s/helm"
                                     }
                 }
             }
@@ -67,7 +66,8 @@ void stageAutomaticRelease() {
                     .mountJenkinsUser()
                     .inside("--volume ${WORKSPACE}:/${repositoryName} -w /${repositoryName}")
                             {
-                                make 'longhorn-k8s-helm-package-release'
+                                sh ".bin/helm dependency update k8s/helm"
+                                make 'helm-package-release'
 
                                 withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'harborhelmchartpush', usernameVariable: 'HARBOR_USERNAME', passwordVariable: 'HARBOR_PASSWORD']]) {
                                     sh ".bin/helm registry login ${registryUrl} --username '${HARBOR_USERNAME}' --password '${HARBOR_PASSWORD}'"
