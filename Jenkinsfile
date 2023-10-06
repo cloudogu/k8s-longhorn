@@ -21,17 +21,15 @@ node('docker') {
                     make 'clean'
                 }
 
-                kubevalImage = "cytopia/kubeval:0.15"
-
-                // TODO Lint Helm Chart
-                /*stage("Lint k8s Resources") {
+                helmImage = "alpine/helm:3.13.0"
+                stage("Lint k8s Resources") {
                     new Docker(this)
-                            .image(kubevalImage)
+                            .image(helmImage)
                             .inside("-v ${WORKSPACE}/manifests/:/data -t --entrypoint=")
                                     {
-                                        sh "kubeval manifests/longhorn.yaml --ignore-missing-schemas"
+                                        sh "helm lint /data/k8s/helm"
                                     }
-                }*/
+                }
             }
         }
 
