@@ -10,3 +10,4 @@ backup:
     secret:
       aws_access_key_id: longhorn-test-key
       aws_secret_access_key: longhorn-test-secret-key
+      aws_endpoint: http://192.168.56.1:9000
