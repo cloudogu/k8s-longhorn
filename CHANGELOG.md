@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.5.1-2] - 2023-10-06
+### Fixed
+- Update makefiles to fix the release version.
+
 ## [v1.5.1-1] - 2023-10-06
 ### Added
 - Add default values to configure the backup target #10
