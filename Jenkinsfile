@@ -66,7 +66,6 @@ void stageAutomaticRelease() {
                     .mountJenkinsUser()
                     .inside("--volume ${WORKSPACE}:/${repositoryName} -w /${repositoryName}")
                             {
-                                sh ".bin/helm dependency update k8s/helm"
                                 make 'helm-package-release'
 
                                 withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'harborhelmchartpush', usernameVariable: 'HARBOR_USERNAME', passwordVariable: 'HARBOR_PASSWORD']]) {
