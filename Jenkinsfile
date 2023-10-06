@@ -23,14 +23,15 @@ node('docker') {
 
                 kubevalImage = "cytopia/kubeval:0.15"
 
-                stage("Lint k8s Resources") {
+                // TODO Lint Helm Chart
+                /*stage("Lint k8s Resources") {
                     new Docker(this)
                             .image(kubevalImage)
                             .inside("-v ${WORKSPACE}/manifests/:/data -t --entrypoint=")
                                     {
                                         sh "kubeval manifests/longhorn.yaml --ignore-missing-schemas"
                                     }
-                }
+                }*/
             }
         }
 

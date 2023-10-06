@@ -1,4 +1,12 @@
+longhorn:
+  defaultSettings:
+    backupTarget: s3://longhorn@dummyregion/
+    backupTargetCredentialSecret: longhorn-backup-target
+    nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
+    deletingConfirmationFlag: true
+
 backup:
   target:
-    secretName: minio-secret
-    url: s3://longhorn@dummyregion/
+    secret:
+      aws_access_key_id: longhorn-test-key
+      aws_secret_access_key: longhorn-secret-key
