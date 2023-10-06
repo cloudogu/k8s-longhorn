@@ -1,0 +1,7 @@
+# This is a dummy file because the makefiles still require big yaml wallpaper like the generated for the dogu-controller.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: longhorn-dummy-for-big-wallpaper
+  namespace: longhorn-system
+data: {}

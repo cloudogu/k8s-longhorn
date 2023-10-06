@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.5.1-1] - 2023-10-06
+### Added
+- Add default values to configure the backup target #10
+- Use official longhorn helm chart as dependency.
+
 ## [v1.4.1-2] - 2023-07-07
 ### Added
 - Add additional helm chart as release artifact #8
