@@ -25,7 +25,7 @@ node('docker') {
                 stage("Lint k8s Resources") {
                     new Docker(this)
                             .image(helmImage)
-                            .inside("-v ${WORKSPACE}/manifests/:/data -t --entrypoint=")
+                            .inside("-v ${WORKSPACE}/:/data -t --entrypoint=")
                                     {
                                         sh "helm lint /data/k8s/helm"
                                     }
