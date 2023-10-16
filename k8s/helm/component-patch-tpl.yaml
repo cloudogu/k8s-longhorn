@@ -1,71 +1,63 @@
-component-patch-api: v1
+apiVersion: v1
 
 values:
-  newName: "totally different name"
   images:
     engine: longhornio/longhorn-engine:v1.5.1
     manager: longhornio/longhorn-manager:v1.5.1
     ui: longhornio/longhorn-ui:v1.5.1
     instanceManager: longhornio/longhorn-instance-manager:v1.5.1
     shareManager: longhornio/longhorn-share-manager:v1.5.1
-    backingImageManager: longhornio/longhorn-image-manager:v1.5.1
+    backingImageManager: longhornio/backing-image-manager:v1.5.1
     supportBundleKit: longhornio/support-bundle-kit:v0.0.25
-    csi-attacher: longhornio/csi-attacher:v4.2.0
-    csi-provisioner: longhornio/csi-provisioner:v3.4.1
-    csi-nodeDriverRegistrar: longhornio/csi-node-driver-registrar:v2.7.0
-    csi-snapshotter: longhornio/csi-snapshotter:v6.2.1
-    csi-livenessProbe: longhornio/livenessprobe:v2.9.0
+    csiAttacher: longhornio/csi-attacher:v4.2.0
+    csiProvisioner: longhornio/csi-provisioner:v3.4.1
+    csiNodeDriverRegistrar: longhornio/csi-node-driver-registrar:v2.7.0
+    csiSnapshotter: longhornio/csi-snapshotter:v6.2.1
+    csiLivenessProbe: longhornio/livenessprobe:v2.9.0
+    csiResizer: longhornio/csi-resizer:v1.7.0
 
 patches:
-  Chart.yaml:
-    name: "Foo: {{ .name }}"
-    annotations:
-      patch-func-full-image-name: {{ imageFullName .images.engine }}
-      patch-func-image-registry: {{ imageRegistry .images.engine }}
-      patch-func-image-repo: {{ imageRepository .images.engine }}
-      patch-func-image-tag: {{ imageTag .images.engine }}
-
   values.yaml:
     longhorn:
       image:
         longhorn:
           engine:
-            repository: {{ imageRegistry .images.engine }}{{ imageRepository .images.engine }}
-            tag: {{ imageTag .images.engine }}
+            repository: "{{ registryFrom .images.engine }}/{{ repositoryFrom .images.engine }}"
+            tag: "{{ tagFrom .images.engine }}"
           manager:
-            repository: {{ imageRegistry .images.manager }}{{ imageRepository .images.manager }}
-            tag: {{ imageTag .images.manager }}
+            repository: "{{ registryFrom .images.manager }}/{{ repositoryFrom .images.manager }}"
+            tag: "{{ tagFrom .images.manager }}"
           ui:
-            repository: {{ imageRegistry .images.ui }}{{ imageRepository .images.ui }}
-            tag: {{ imageTag .images.ui }}
+            repository: "{{ registryFrom .images.ui }}/{{ repositoryFrom .images.ui }}"
+            tag: "{{ tagFrom .images.ui }}"
           instanceManager:
-            repository: {{ imageRegistry .images.instanceManager }}{{ imageRepository .images.instanceManager }}
-            tag: {{ imageTag .images.instanceManager }}
+            repository: "{{ registryFrom .images.instanceManager }}/{{ repositoryFrom .images.instanceManager }}"
+            tag: "{{ tagFrom .images.instanceManager }}"
           shareManager:
-            repository: {{ imageRegistry .images.shareManager }}{{ imageRepository .images.shareManager }}
-            tag: {{ imageTag .images.shareManager }}
+            repository: "{{ registryFrom .images.shareManager }}/{{ repositoryFrom .images.shareManager }}"
+            tag: "{{ tagFrom .images.shareManager }}"
           backingImageManager:
-            repository: {{ imageRegistry .images.backingImageManager }}{{ imageRepository .images.backingImageManager }}
-            tag: {{ imageTag .images.backingImageManager }}
+            repository: "{{ registryFrom .images.backingImageManager }}/{{ repositoryFrom .images.backingImageManager }}"
+            tag: "{{ tagFrom .images.backingImageManager }}"
           supportBundleKit:
-            repository: {{ imageRegistry .images.supportBundleKit }}{{ imageRepository .images.supportBundleKit }}
-            tag: {{ imageTag .images.supportBundleKit }}
+            repository: "{{ registryFrom .images.supportBundleKit }}/{{ repositoryFrom .images.supportBundleKit }}"
+            tag: "{{ tagFrom .images.supportBundleKit }}"
         csi:
           attacher:
-            repository: {{ imageRegistry .images.csi-attacher }}{{ imageRepository .images.csi-attacher }}
-            tag: {{ imageTag .images.csi-attacher }}
+            repository: "{{ registryFrom .images.csiAttacher }}/{{ repositoryFrom .images.csiAttacher }}"
+            tag: "{{ tagFrom .images.csiAttacher }}"
           provisioner:
-            repository: {{ imageRegistry .images.csi-provisioner }}{{ imageRepository .images.csi-provisioner }}
-            tag: {{ imageTag .images.csi-provisioner }}
+            repository: "{{ registryFrom .images.csiProvisioner }}/{{ repositoryFrom .images.csiProvisioner }}"
+            tag: "{{ tagFrom .images.csiProvisioner }}"
           nodeDriverRegistrar:
-            repository: {{ imageRegistry .images.csi-nodeDriverRegistrar }}{{ imageRepository .images.csi-nodeDriverRegistrar }}
-            tag: {{ imageTag .images.csi-nodeDriverRegistrar }}
+            repository: "{{ registryFrom .images.csiNodeDriverRegistrar }}/{{ repositoryFrom .images.csiNodeDriverRegistrar }}"
+            tag: "{{ tagFrom .images.csiNodeDriverRegistrar }}"
           resizer:
-            repository: {{ imageRegistry .images.csi-resizer }}{{ imageRepository .images.csi-resizer }}
-            tag: {{ imageTag .images.csi-resizer }}
+            repository: "{{ registryFrom .images.csiResizer }}/{{ repositoryFrom .images.csiResizer }}"
+            tag: "{{ tagFrom .images.csiResizer }}"
           snapshotter:
-            repository: {{ imageRegistry .images.csi-snapshotter }}{{ imageRepository .images.csi-snapshotter }}
-            tag: {{ imageTag .images.csi-snapshotter }}
+            repository: "{{ registryFrom .images.csiSnapshotter }}/{{ repositoryFrom .images.csiSnapshotter }}"
+            tag: "{{ tagFrom .images.csiSnapshotter }}"
           livenessProbe:
-            repository: {{ imageRegistry .images.csi-livenessProbe }}{{ imageRepository .images.csi-livenessProbe }}
-            tag: {{ imageTag .images.csi-livenessProbe }}
+            repository: "{{ registryFrom .images.csiLivenessProbe }}/{{ repositoryFrom .images.csiLivenessProbe }}"
+            tag: "{{ tagFrom .images.csiLivenessProbe }}"
