@@ -1,5 +1,5 @@
 #!groovy
-@Library('github.com/cloudogu/ces-build-lib@1.67.0')
+@Library('github.com/cloudogu/ces-build-lib@1.68.0')
 import com.cloudogu.ces.cesbuildlib.*
 
 git = new Git(this, "cesmarvin")
@@ -12,6 +12,10 @@ changelog = new Changelog(this)
 repositoryName = "k8s-longhorn"
 productionReleaseBranch = "main"
 
+helmTargetDir = "target/k8s"
+helmChartDir = "${helmTargetDir}/helm"
+goVersion = "1.21"
+
 node('docker') {
     timestamps {
         catchError {
@@ -21,17 +25,41 @@ node('docker') {
                     make 'clean'
                 }
 
-                helmImage = "alpine/helm:3.13.0"
-                stage("Lint k8s Resources") {
-                    new Docker(this)
-                            .image(helmImage)
-                            .inside("-v ${WORKSPACE}/:/data -t --entrypoint=")
-                                    {
-                                        sh "helm lint /data/k8s/helm"
+                new Docker(this)
+                        .image("golang:${goVersion}")
+                        .mountJenkinsUser()
+                        .inside("--volume ${WORKSPACE}:/${repositoryName} -w /${repositoryName}")
+                                {
+                                    stage('Generate k8s Resources') {
+                                        make 'helm-generate'
+                                        archiveArtifacts 'target/k8s/**/*'
                                     }
+
+                                    stage("Lint helm") {
+                                        make 'helm-lint'
+                                    }
+                                }
+                stage('Set up k3d cluster') {
+                    k3d.startK3d()
+                }
+
+                stage('Deploy snapshot-controller') {
+                    k3d.helm("install ${repositoryName} ${helmChartDir}")
+                }
+
+                stage('Test snapshot-controller') {
+                    // Sleep because it takes time for the controller to create the resource. Without it would end up
+                    // in error "no matching resource found when run the wait command"
+                    sleep(5)
+                    k3d.kubectl("wait --for=condition=ready pod -l app=k8s-longhorn --timeout=300s")
+                }
+
+                stage('Remove k3d cluster') {
+                    k3d.deleteK3d()
                 }
             }
         }
+
 
         stageAutomaticRelease()
     }
@@ -62,15 +90,18 @@ void stageAutomaticRelease() {
 
         stage('Push Helm chart to Harbor') {
             new Docker(this)
-                    .image("golang:1.20")
+                    .image("golang:${goVersion}")
                     .mountJenkinsUser()
                     .inside("--volume ${WORKSPACE}:/${repositoryName} -w /${repositoryName}")
                             {
-                                make 'helm-package-release'
+                                // Package chart
+                                make 'helm-package'
 
-                                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'harborhelmchartpush', usernameVariable: 'HARBOR_USERNAME', passwordVariable: 'HARBOR_PASSWORD']]) {
+                                // Push charts
+                                withCredentials([usernamePassword(credentialsId: 'harborhelmchartpush', usernameVariable: 'HARBOR_USERNAME', passwordVariable: 'HARBOR_PASSWORD')]) {
                                     sh ".bin/helm registry login ${registryUrl} --username '${HARBOR_USERNAME}' --password '${HARBOR_PASSWORD}'"
-                                    sh ".bin/helm push target/make/k8s/helm/${repositoryName}-${registryVersion}.tgz oci://${registryUrl}/${registryNamespace}"
+
+                                    sh ".bin/helm push target/k8s/helm/${repositoryName}-${releaseVersion}.tgz oci://${registryUrl}/${registryNamespace}/"
                                 }
                             }
         }
