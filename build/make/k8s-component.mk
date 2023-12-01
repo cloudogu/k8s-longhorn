@@ -24,7 +24,6 @@ COMPONENT_PRE_APPLY_TARGETS ?=
 
 # This can be used by external components to prevent generate and copy controller manifests by overriding with an empty value.
 IMAGE_IMPORT_TARGET?=image-import
-CHECK_VAR_TARGETS?=check-all-vars
 
 ##@ K8s - Helm general
 .PHONY: helm-init-chart
@@ -86,7 +85,7 @@ helm-delete: ${BINARY_HELM} check-k8s-namespace-env-var ## Uninstalls the curren
 helm-reinstall: helm-delete helm-apply ## Uninstalls the current helm chart and reinstalls it.
 
 .PHONY: helm-chart-import
-helm-chart-import: check-all-vars helm-generate helm-package ${IMAGE_IMPORT_TARGET} ## Imports the currently available chart into the cluster-local registry.
+helm-chart-import: ${CHECK_VAR_TARGETS} helm-generate helm-package ${IMAGE_IMPORT_TARGET} ## Imports the currently available chart into the cluster-local registry.
 	@if [[ ${STAGE} == "development" ]]; then \
 		echo "Import ${HELM_DEV_RELEASE_TGZ} into K8s cluster ${K3CES_REGISTRY_URL_PREFIX}..."; \
 		${BINARY_HELM} push ${HELM_DEV_RELEASE_TGZ} oci://${K3CES_REGISTRY_URL_PREFIX}/${HELM_ARTIFACT_NAMESPACE} ${BINARY_HELM_ADDITIONAL_PUSH_ARGS}; \

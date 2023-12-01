@@ -10,6 +10,7 @@ include build/make/self-update.mk
 
 IMAGE_IMPORT_TARGET=
 COMPONENT_DEPLOY_NAMESPACE=longhorn-system
+CHECK_VAR_TARGETS=check-all-vars-without-image
 include build/make/k8s-component.mk
 
 .PHONY: longhorn-release

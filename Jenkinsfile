@@ -55,8 +55,8 @@ node('docker') {
                     stage('Test longhorn') {
                         // Sleep because it takes time for the controller to create the resource. Without it would end up
                         // in error "no matching resource found when run the wait command"
-                        sleep(5)
-                        k3d.kubectl("wait --for=condition=ready pod -l app=k8s-longhorn --timeout=300s")
+                        sleep(20)
+                        k3d.kubectl("wait --for=condition=ready pod -l app.kubernetes.io/name=k8s-longhorn --timeout=300s")
                     }
                 } finally {
                     stage('Remove k3d cluster') {
