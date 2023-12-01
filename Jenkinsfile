@@ -31,6 +31,7 @@ node('docker') {
                         .inside("--volume ${WORKSPACE}:/${repositoryName} -w /${repositoryName}")
                                 {
                                     stage('Generate k8s Resources') {
+                                        make 'helm-update-dependencies'
                                         make 'helm-generate'
                                         archiveArtifacts 'target/k8s/**/*'
                                     }
@@ -47,7 +48,6 @@ node('docker') {
                 }
 
                 stage('Deploy longhorn') {
-                    make 'helm-update-dependencies'
                     k3d.helm("install ${repositoryName} ${helmChartDir}")
                 }
 
