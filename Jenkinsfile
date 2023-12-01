@@ -46,11 +46,12 @@ node('docker') {
                     k3d.startK3d()
                 }
 
-                stage('Deploy snapshot-controller') {
+                stage('Deploy longhorn') {
+                    make 'helm-update-dependencies'
                     k3d.helm("install ${repositoryName} ${helmChartDir}")
                 }
 
-                stage('Test snapshot-controller') {
+                stage('Test longhorn') {
                     // Sleep because it takes time for the controller to create the resource. Without it would end up
                     // in error "no matching resource found when run the wait command"
                     sleep(5)
