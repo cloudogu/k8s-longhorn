@@ -42,28 +42,29 @@ node('docker') {
                                 }
 
                 K3d k3d = new K3d(this, "${WORKSPACE}", "${WORKSPACE}/k3d", env.PATH)
+                try {
+                    stage('Set up k3d cluster') {
+                        k3d.startK3d()
+                    }
 
-                stage('Set up k3d cluster') {
-                    k3d.startK3d()
-                }
+                    stage('Deploy longhorn') {
+                        k3d.kubectl("create namespace longhorn-system")
+                        k3d.helm("install ${repositoryName} ${helmChartDir}")
+                    }
 
-                stage('Deploy longhorn') {
-                    k3d.helm("install ${repositoryName} ${helmChartDir}")
-                }
-
-                stage('Test longhorn') {
-                    // Sleep because it takes time for the controller to create the resource. Without it would end up
-                    // in error "no matching resource found when run the wait command"
-                    sleep(5)
-                    k3d.kubectl("wait --for=condition=ready pod -l app=k8s-longhorn --timeout=300s")
-                }
-
-                stage('Remove k3d cluster') {
-                    k3d.deleteK3d()
+                    stage('Test longhorn') {
+                        // Sleep because it takes time for the controller to create the resource. Without it would end up
+                        // in error "no matching resource found when run the wait command"
+                        sleep(5)
+                        k3d.kubectl("wait --for=condition=ready pod -l app=k8s-longhorn --timeout=300s")
+                    }
+                } finally {
+                    stage('Remove k3d cluster') {
+                        k3d.deleteK3d()
+                    }
                 }
             }
         }
-
 
         stageAutomaticRelease()
     }
