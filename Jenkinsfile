@@ -39,6 +39,9 @@ node('docker') {
                                         make 'helm-lint'
                                     }
                                 }
+
+                K3d k3d = new K3d(this, "${WORKSPACE}", "${WORKSPACE}/k3d", env.PATH)
+
                 stage('Set up k3d cluster') {
                     k3d.startK3d()
                 }
