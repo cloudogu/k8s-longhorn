@@ -48,25 +48,10 @@ node('docker') {
 void stageAutomaticRelease() {
     if (gitflow.isReleaseBranch()) {
         Makefile makefile = new Makefile(this)
-        String releaseVersion = git.getSimpleBranchName()
-        String registryVersion = makefile.getVersion()
+        String releaseVersion = makefile.getVersion()
+        String changelogVersion = git.getSimpleBranchName()
         String registryNamespace = "k8s"
         String registryUrl = "registry.cloudogu.com"
-
-        stage('Finish Release') {
-            gitflow.finishRelease(releaseVersion, productionReleaseBranch)
-        }
-
-        stage('Generate release resource') {
-            make 'generate-release-resource'
-        }
-
-        stage('Push to Registry') {
-            GString targetLonghornResourceYaml = "target/make/k8s/${repositoryName}_${registryVersion}.yaml"
-
-            DoguRegistry registry = new DoguRegistry(this)
-            registry.pushK8sYaml(targetLonghornResourceYaml, repositoryName, registryNamespace, "${registryVersion}")
-        }
 
         stage('Push Helm chart to Harbor') {
             new Docker(this)
@@ -86,7 +71,11 @@ void stageAutomaticRelease() {
         }
 
         stage('Add Github-Release') {
-            releaseId = github.createReleaseWithChangelog(releaseVersion, changelog, productionReleaseBranch)
+            releaseId = github.createReleaseWithChangelog(changelogVersion, changelog, productionReleaseBranch)
+        }
+
+        stage('Finish Release') {
+            gitflow.finishRelease(releaseVersion, productionReleaseBranch)
         }
     }
 }
