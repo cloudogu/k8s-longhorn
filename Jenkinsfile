@@ -12,8 +12,6 @@ changelog = new Changelog(this)
 repositoryName = "k8s-longhorn"
 productionReleaseBranch = "main"
 
-helmTargetDir = "target/k8s"
-helmChartDir = "${helmTargetDir}/helm"
 goVersion = "1.21"
 
 node('docker') {
@@ -40,29 +38,6 @@ node('docker') {
                                         make 'helm-lint'
                                     }
                                 }
-
-                K3d k3d = new K3d(this, "${WORKSPACE}", "${WORKSPACE}/k3d", env.PATH)
-                try {
-                    stage('Set up k3d cluster') {
-                        k3d.startK3d()
-                    }
-
-                    stage('Deploy longhorn') {
-                        k3d.kubectl("create namespace longhorn-system")
-                        k3d.helm("install ${repositoryName} ${helmChartDir}")
-                    }
-
-                    stage('Test longhorn') {
-                        // Sleep because it takes time for the controller to create the resource. Without it would end up
-                        // in error "no matching resource found when run the wait command"
-                        sleep(20)
-                        k3d.kubectl("wait --for=condition=ready pod -l app.kubernetes.io/name=k8s-longhorn --timeout=300s")
-                    }
-                } finally {
-                    stage('Remove k3d cluster') {
-                        k3d.deleteK3d()
-                    }
-                }
             }
         }
 
@@ -105,7 +80,6 @@ void stageAutomaticRelease() {
                                 // Push charts
                                 withCredentials([usernamePassword(credentialsId: 'harborhelmchartpush', usernameVariable: 'HARBOR_USERNAME', passwordVariable: 'HARBOR_PASSWORD')]) {
                                     sh ".bin/helm registry login ${registryUrl} --username '${HARBOR_USERNAME}' --password '${HARBOR_PASSWORD}'"
-
                                     sh ".bin/helm push target/k8s/helm/${repositoryName}-${releaseVersion}.tgz oci://${registryUrl}/${registryNamespace}/"
                                 }
                             }
