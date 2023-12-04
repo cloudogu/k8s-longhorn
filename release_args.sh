@@ -14,7 +14,7 @@ update_versions_modify_files() {
 
   # Extract longhorn chart
   local longhornVersion
-  longhornVersion=$(yq '.dependencies[] | select(.name="longhorn").version' < "k8s/helm/Chart.yaml")
+  longhornVersion=$(yq '.dependencies[] | select(.name=="longhorn").version' < "k8s/helm/Chart.yaml")
   local longhornPackage
   longhornPackage="k8s/helm/charts/longhorn-${longhornVersion}.tgz"
 
