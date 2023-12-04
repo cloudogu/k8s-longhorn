@@ -4,6 +4,8 @@ set -o nounset
 set -o pipefail
 
 componentTemplateFile=k8s/helm/component-patch-tpl.yaml
+longhornTempChart="/tmp/longhorn"
+longhornTempValues="${longhornTempChart}/values.yaml"
 
 # this function will be sourced from release.sh and be called from release_functions.sh
 update_versions_modify_files() {
@@ -11,14 +13,13 @@ update_versions_modify_files() {
   make helm-update-dependencies  > /dev/null
 
   # Extract longhorn chart
+  local longhornVersion
   longhornVersion=$(yq '.dependencies[] | select(.name="longhorn").version' < "k8s/helm/Chart.yaml")
+  local longhornPackage
   longhornPackage="k8s/helm/charts/longhorn-${longhornVersion}.tgz"
-  longhornTempChart="/tmp/longhorn"
 
   echo "Extract longhorn helm chart"
-  tar -zxvf ${longhornPackage} -C "/tmp" > /dev/null
-
-  longhornValues="${longhornTempChart}/values.yaml"
+  tar -zxvf "${longhornPackage}" -C "/tmp" > /dev/null
 
   echo "Set images in component path template"
   update_component_patch_template ".values.images.engine" ".image.longhorn.engine"
@@ -39,10 +40,12 @@ update_versions_modify_files() {
 }
 
 update_component_patch_template() {
-  componentTemplateKey="${1}"
-  dependencyValuesKey="${2}"
-  repository=$(yq "${dependencyValuesKey}.repository" < ${longhornValues})
-  tag=$(yq "${dependencyValuesKey}.tag" < ${longhornValues})
+  local componentTemplateKey="${1}"
+  local dependencyValuesKey="${2}"
+  local repository
+  repository=$(yq "${dependencyValuesKey}.repository" < ${longhornTempValues})
+  local tag
+  tag=$(yq "${dependencyValuesKey}.tag" < ${longhornTempValues})
 
   yq -i "${componentTemplateKey} = \"${repository}:${tag}\"" "${componentTemplateFile}"
 }
