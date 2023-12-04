@@ -11,6 +11,7 @@ changelog = new Changelog(this)
 
 repositoryName = "k8s-longhorn"
 productionReleaseBranch = "main"
+k8sTargetDir="target/k8s"
 
 goVersion = "1.21"
 
@@ -31,7 +32,7 @@ node('docker') {
                                     stage('Generate k8s Resources') {
                                         make 'helm-update-dependencies'
                                         make 'helm-generate'
-                                        archiveArtifacts 'target/k8s/**/*'
+                                        archiveArtifacts "${k8sTargetDir}/**/*"
                                     }
 
                                     stage("Lint helm") {
@@ -61,6 +62,7 @@ void stageAutomaticRelease() {
                             {
                                 // Package chart
                                 make 'helm-package'
+                                archiveArtifacts "${k8sTargetDir}/**/*"
 
                                 // Push charts
                                 withCredentials([usernamePassword(credentialsId: 'harborhelmchartpush', usernameVariable: 'HARBOR_USERNAME', passwordVariable: 'HARBOR_PASSWORD')]) {
