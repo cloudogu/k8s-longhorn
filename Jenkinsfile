@@ -72,12 +72,12 @@ void stageAutomaticRelease() {
                             }
         }
 
-        stage('Add Github-Release') {
-            releaseId = github.createReleaseWithChangelog(changelogVersion, changelog, productionReleaseBranch)
-        }
-
         stage('Finish Release') {
             gitflow.finishRelease(releaseVersion, productionReleaseBranch)
+        }
+
+        stage('Add Github-Release') {
+            releaseId = github.createReleaseWithChangelog(changelogVersion, changelog, productionReleaseBranch)
         }
     }
 }
