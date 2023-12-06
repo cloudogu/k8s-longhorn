@@ -11,9 +11,10 @@ changelog = new Changelog(this)
 
 repositoryName = "k8s-longhorn"
 productionReleaseBranch = "main"
-k8sTargetDir="target/k8s"
 
 goVersion = "1.21"
+helmTargetDir = "target/k8s"
+helmChartDir = "${helmTargetDir}/helm"
 
 node('docker') {
     timestamps {
@@ -32,7 +33,7 @@ node('docker') {
                                     stage('Generate k8s Resources') {
                                         make 'helm-update-dependencies'
                                         make 'helm-generate'
-                                        archiveArtifacts "${k8sTargetDir}/**/*"
+                                        archiveArtifacts "${helmTargetDir}/**/*"
                                     }
 
                                     stage("Lint helm") {
@@ -62,12 +63,12 @@ void stageAutomaticRelease() {
                             {
                                 // Package chart
                                 make 'helm-package'
-                                archiveArtifacts "${k8sTargetDir}/**/*"
+                                archiveArtifacts "${helmTargetDir}/**/*"
 
-                                // Push charts
-                                withCredentials([usernamePassword(credentialsId: 'harborhelmchartpush', usernameVariable: 'HARBOR_USERNAME', passwordVariable: 'HARBOR_PASSWORD')]) {
+                                // Push chart
+                                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'harborhelmchartpush', usernameVariable: 'HARBOR_USERNAME', passwordVariable: 'HARBOR_PASSWORD']]) {
                                     sh ".bin/helm registry login ${registryUrl} --username '${HARBOR_USERNAME}' --password '${HARBOR_PASSWORD}'"
-                                    sh ".bin/helm push target/k8s/helm/${repositoryName}-${releaseVersion}.tgz oci://${registryUrl}/${registryNamespace}/"
+                                    sh ".bin/helm push ${helmChartDir}/${repositoryName}-${releaseVersion}.tgz oci://${registryUrl}/${registryNamespace}"
                                 }
                             }
         }
