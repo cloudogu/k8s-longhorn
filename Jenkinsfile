@@ -1,5 +1,5 @@
 #!groovy
-@Library('github.com/cloudogu/ces-build-lib@1.67.0')
+@Library('github.com/cloudogu/ces-build-lib@1.68.0')
 import com.cloudogu.ces.cesbuildlib.*
 
 git = new Git(this, "cesmarvin")
@@ -12,6 +12,10 @@ changelog = new Changelog(this)
 repositoryName = "k8s-longhorn"
 productionReleaseBranch = "main"
 
+goVersion = "1.21"
+helmTargetDir = "target/k8s"
+helmChartDir = "${helmTargetDir}/helm"
+
 node('docker') {
     timestamps {
         catchError {
@@ -21,15 +25,21 @@ node('docker') {
                     make 'clean'
                 }
 
-                helmImage = "alpine/helm:3.13.0"
-                stage("Lint k8s Resources") {
-                    new Docker(this)
-                            .image(helmImage)
-                            .inside("-v ${WORKSPACE}/:/data -t --entrypoint=")
-                                    {
-                                        sh "helm lint /data/k8s/helm"
+                new Docker(this)
+                        .image("golang:${goVersion}")
+                        .mountJenkinsUser()
+                        .inside("--volume ${WORKSPACE}:/${repositoryName} -w /${repositoryName}")
+                                {
+                                    stage('Generate k8s Resources') {
+                                        make 'helm-update-dependencies'
+                                        make 'helm-generate'
+                                        archiveArtifacts "${helmTargetDir}/**/*"
                                     }
-                }
+
+                                    stage("Lint helm") {
+                                        make 'helm-lint'
+                                    }
+                                }
             }
         }
 
@@ -40,43 +50,35 @@ node('docker') {
 void stageAutomaticRelease() {
     if (gitflow.isReleaseBranch()) {
         Makefile makefile = new Makefile(this)
-        String releaseVersion = git.getSimpleBranchName()
-        String registryVersion = makefile.getVersion()
+        String releaseVersion = makefile.getVersion()
+        String changelogVersion = git.getSimpleBranchName()
         String registryNamespace = "k8s"
         String registryUrl = "registry.cloudogu.com"
+
+        stage('Push Helm chart to Harbor') {
+            new Docker(this)
+                    .image("golang:${goVersion}")
+                    .mountJenkinsUser()
+                    .inside("--volume ${WORKSPACE}:/${repositoryName} -w /${repositoryName}")
+                            {
+                                // Package chart
+                                make 'helm-package'
+                                archiveArtifacts "${helmTargetDir}/**/*"
+
+                                // Push chart
+                                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'harborhelmchartpush', usernameVariable: 'HARBOR_USERNAME', passwordVariable: 'HARBOR_PASSWORD']]) {
+                                    sh ".bin/helm registry login ${registryUrl} --username '${HARBOR_USERNAME}' --password '${HARBOR_PASSWORD}'"
+                                    sh ".bin/helm push ${helmChartDir}/${repositoryName}-${releaseVersion}.tgz oci://${registryUrl}/${registryNamespace}"
+                                }
+                            }
+        }
 
         stage('Finish Release') {
             gitflow.finishRelease(releaseVersion, productionReleaseBranch)
         }
 
-        stage('Generate release resource') {
-            make 'generate-release-resource'
-        }
-
-        stage('Push to Registry') {
-            GString targetLonghornResourceYaml = "target/make/k8s/${repositoryName}_${registryVersion}.yaml"
-
-            DoguRegistry registry = new DoguRegistry(this)
-            registry.pushK8sYaml(targetLonghornResourceYaml, repositoryName, registryNamespace, "${registryVersion}")
-        }
-
-        stage('Push Helm chart to Harbor') {
-            new Docker(this)
-                    .image("golang:1.20")
-                    .mountJenkinsUser()
-                    .inside("--volume ${WORKSPACE}:/${repositoryName} -w /${repositoryName}")
-                            {
-                                make 'helm-package-release'
-
-                                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'harborhelmchartpush', usernameVariable: 'HARBOR_USERNAME', passwordVariable: 'HARBOR_PASSWORD']]) {
-                                    sh ".bin/helm registry login ${registryUrl} --username '${HARBOR_USERNAME}' --password '${HARBOR_PASSWORD}'"
-                                    sh ".bin/helm push target/make/k8s/helm/${repositoryName}-${registryVersion}.tgz oci://${registryUrl}/${registryNamespace}"
-                                }
-                            }
-        }
-
         stage('Add Github-Release') {
-            releaseId = github.createReleaseWithChangelog(releaseVersion, changelog, productionReleaseBranch)
+            releaseId = github.createReleaseWithChangelog(changelogVersion, changelog, productionReleaseBranch)
         }
     }
 }

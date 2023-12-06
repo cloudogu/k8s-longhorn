@@ -1,4 +1,5 @@
 longhorn:
+  nameOverride: k8s-longhorn
   defaultSettings:
     # backupTarget specifies the bucket where the backup will be stored.
     backupTarget: s3://longhorn@dummyregion/

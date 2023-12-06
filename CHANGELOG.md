@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- [#14] Added component patch template file for mirroring this chart in offline environments.
+
+### Changed
+- [#14] Update makefiles and just use only the chart as yaml resources.
 
 ## [v1.5.1-2] - 2023-10-06
 ### Fixed

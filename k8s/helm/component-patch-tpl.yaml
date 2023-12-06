@@ -1,0 +1,61 @@
+apiVersion: v1
+values:
+  images:
+    engine: longhornio/longhorn-engine:v1.5.1
+    manager: longhornio/longhorn-manager:v1.5.1
+    ui: longhornio/longhorn-ui:v1.5.1
+    instanceManager: longhornio/longhorn-instance-manager:v1.5.1
+    shareManager: longhornio/longhorn-share-manager:v1.5.1
+    backingImageManager: longhornio/backing-image-manager:v1.5.1
+    supportBundleKit: longhornio/support-bundle-kit:v0.0.25
+    csiAttacher: longhornio/csi-attacher:v4.2.0
+    csiProvisioner: longhornio/csi-provisioner:v3.4.1
+    csiNodeDriverRegistrar: longhornio/csi-node-driver-registrar:v2.7.0
+    csiSnapshotter: longhornio/csi-snapshotter:v6.2.1
+    csiLivenessProbe: longhornio/livenessprobe:v2.9.0
+    csiResizer: longhornio/csi-resizer:v1.7.0
+patches:
+  values.yaml:
+    longhorn:
+      image:
+        longhorn:
+          engine:
+            repository: "{{ registryFrom .images.engine }}/{{ repositoryFrom .images.engine }}"
+            tag: "{{ tagFrom .images.engine }}"
+          manager:
+            repository: "{{ registryFrom .images.manager }}/{{ repositoryFrom .images.manager }}"
+            tag: "{{ tagFrom .images.manager }}"
+          ui:
+            repository: "{{ registryFrom .images.ui }}/{{ repositoryFrom .images.ui }}"
+            tag: "{{ tagFrom .images.ui }}"
+          instanceManager:
+            repository: "{{ registryFrom .images.instanceManager }}/{{ repositoryFrom .images.instanceManager }}"
+            tag: "{{ tagFrom .images.instanceManager }}"
+          shareManager:
+            repository: "{{ registryFrom .images.shareManager }}/{{ repositoryFrom .images.shareManager }}"
+            tag: "{{ tagFrom .images.shareManager }}"
+          backingImageManager:
+            repository: "{{ registryFrom .images.backingImageManager }}/{{ repositoryFrom .images.backingImageManager }}"
+            tag: "{{ tagFrom .images.backingImageManager }}"
+          supportBundleKit:
+            repository: "{{ registryFrom .images.supportBundleKit }}/{{ repositoryFrom .images.supportBundleKit }}"
+            tag: "{{ tagFrom .images.supportBundleKit }}"
+        csi:
+          attacher:
+            repository: "{{ registryFrom .images.csiAttacher }}/{{ repositoryFrom .images.csiAttacher }}"
+            tag: "{{ tagFrom .images.csiAttacher }}"
+          provisioner:
+            repository: "{{ registryFrom .images.csiProvisioner }}/{{ repositoryFrom .images.csiProvisioner }}"
+            tag: "{{ tagFrom .images.csiProvisioner }}"
+          nodeDriverRegistrar:
+            repository: "{{ registryFrom .images.csiNodeDriverRegistrar }}/{{ repositoryFrom .images.csiNodeDriverRegistrar }}"
+            tag: "{{ tagFrom .images.csiNodeDriverRegistrar }}"
+          resizer:
+            repository: "{{ registryFrom .images.csiResizer }}/{{ repositoryFrom .images.csiResizer }}"
+            tag: "{{ tagFrom .images.csiResizer }}"
+          snapshotter:
+            repository: "{{ registryFrom .images.csiSnapshotter }}/{{ repositoryFrom .images.csiSnapshotter }}"
+            tag: "{{ tagFrom .images.csiSnapshotter }}"
+          livenessProbe:
+            repository: "{{ registryFrom .images.csiLivenessProbe }}/{{ repositoryFrom .images.csiLivenessProbe }}"
+            tag: "{{ tagFrom .images.csiLivenessProbe }}"
