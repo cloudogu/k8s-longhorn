@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.5.1-3] - 2023-12-08
+### Added
+- [#14] Added component patch template file for mirroring this chart in offline environments.
+
+### Changed
+- [#14] Update makefiles and just use only the chart as yaml resources.
+
 ## [v1.5.1-2] - 2023-10-06
 ### Fixed
 - Update makefiles to fix the release version.
