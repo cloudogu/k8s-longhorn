@@ -2,15 +2,7 @@ longhorn:
   nameOverride: k8s-longhorn
   defaultSettings:
     # backupTarget specifies the bucket where the backup will be stored.
-    backupTarget: s3://longhorn@dummyregion/
-    backupTargetCredentialSecret: longhorn-backup-target
+    backupTarget: ~
+    backupTargetCredentialSecret: ~
     nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
     deletingConfirmationFlag: true
-
-backup:
-  target:
-    secret:
-      aws_access_key_id: longhorn-test-key
-      aws_secret_access_key: longhorn-test-secret-key
-      # aws_endpoint is just the server url to the s3 compatible storage.
-      aws_endpoint: http://192.168.56.1:9000
