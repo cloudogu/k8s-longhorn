@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.5.1-4] - 2024-01-03
+### Changed
+- [#16] The longhorn-backup-target can now be configured using an externally provided secret.
+
 ## [v1.5.1-3] - 2023-12-08
 ### Added
 - [#14] Added component patch template file for mirroring this chart in offline environments.
