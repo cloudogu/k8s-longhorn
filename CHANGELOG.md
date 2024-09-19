@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.5.1-5] - 2024-09-19
+### Changed
+- [#18] Relicense to AGPL-3.0-only
+
 ## [v1.5.1-4] - 2024-01-03
 ### Changed
 - [#16] The longhorn-backup-target can now be configured using an externally provided secret.
