@@ -1,5 +1,7 @@
 longhorn:
   nameOverride: k8s-longhorn
+  privateRegistry:
+    registrySecret: ces-container-registries
   defaultSettings:
     # backupTarget specifies the bucket where the backup will be stored.
     backupTarget: ~
