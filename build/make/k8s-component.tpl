@@ -10,5 +10,4 @@ metadata:
 spec:
   name: NAME
   namespace: NAMESPACE
-  deployNamespace: longhorn-system
   version: VERSION
