@@ -35,6 +35,7 @@ update_versions_modify_files() {
   update_component_patch_template ".values.images.csiSnapshotter" ".image.csi.snapshotter"
   update_component_patch_template ".values.images.csiLivenessProbe" ".image.csi.livenessProbe"
   update_component_patch_template ".values.images.csiResizer" ".image.csi.resizer"
+  update_component_patch_template ".values.images.removePrivileges" ".image.removePrivileges"
 
   rm -rf ${longhornTempChart}
 }
