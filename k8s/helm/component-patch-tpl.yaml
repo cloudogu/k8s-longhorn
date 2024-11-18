@@ -17,6 +17,8 @@ values:
     removePrivileges: bitnami/kubectl:1.30.6
 patches:
   values.yaml:
+    additionalImages:
+      removePrivileges: "{{ .images.removePrivileges }}"
     longhorn:
       image:
         longhorn:
@@ -60,6 +62,3 @@ patches:
           livenessProbe:
             repository: "{{ registryFrom .images.csiLivenessProbe }}/{{ repositoryFrom .images.csiLivenessProbe }}"
             tag: "{{ tagFrom .images.csiLivenessProbe }}"
-        removePrivileges:
-          repository: "{{ registryFrom .images.removePrivileges }}/{{ repositoryFrom .images.removePrivileges }}"
-          tag: "{{ tagFrom .images.removePrivileges }}"
