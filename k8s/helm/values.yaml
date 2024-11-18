@@ -8,3 +8,7 @@ longhorn:
     backupTargetCredentialSecret: ~
     nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
     deletingConfirmationFlag: true
+  image:
+    removePrivileges:
+      repository: bitnami/kubectl
+      tag: 1.30.6

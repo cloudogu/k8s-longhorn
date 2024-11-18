@@ -14,6 +14,7 @@ values:
     csiSnapshotter: longhornio/csi-snapshotter:v6.2.1
     csiLivenessProbe: longhornio/livenessprobe:v2.9.0
     csiResizer: longhornio/csi-resizer:v1.7.0
+    removePrivileges: bitnami/kubectl:1.30.6
 patches:
   values.yaml:
     longhorn:
@@ -59,3 +60,6 @@ patches:
           livenessProbe:
             repository: "{{ registryFrom .images.csiLivenessProbe }}/{{ repositoryFrom .images.csiLivenessProbe }}"
             tag: "{{ tagFrom .images.csiLivenessProbe }}"
+        removePrivileges:
+          repository: "{{ registryFrom .images.removePrivileges }}/{{ repositoryFrom .images.removePrivileges }}"
+          tag: "{{ tagFrom .images.removePrivileges }}"
