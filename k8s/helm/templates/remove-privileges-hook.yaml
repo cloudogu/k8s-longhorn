@@ -1,4 +1,4 @@
-# This helm hook deletes an unnecessary ClusterRoleBinding and ServiceAccount after installation/upgrade.
+# This helm hook deletes the unnecessary ClusterRoleBinding and ServiceAccount named "longhorn-support-bundle" after installation/upgrade.
 ---
 apiVersion: batch/v1
 kind: Job
