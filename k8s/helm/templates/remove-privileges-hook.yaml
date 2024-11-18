@@ -19,7 +19,7 @@ spec:
       serviceAccountName: "{{ .Release.Name }}-remove-privileges"
       containers:
         - name: remove-privileges
-          image: "{{ .Values.longhorn.image.removePrivileges.repository }}:{{ .Values.longhorn.image.removePrivileges.tag }}"
+          image: "{{ .Values.additionalImages.removePrivileges }}"
           command:
             - /bin/sh
             - "-c"

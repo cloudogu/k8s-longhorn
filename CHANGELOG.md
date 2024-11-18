@@ -6,7 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.5.1-8] - 2024-11-18
+### Fixed
+- Invalid value referenced for image in removePrivileges-job
+
 ## [v1.5.1-7] - 2024-11-18
+
+[!WARNING]
+This released has been removed as it contains a critical production-breaking bug.
+
 ### Added
 - [#22] Helm hook that deletes an unused ClusterRoleBinding and ServiceAccount after installation/upgrade.
 

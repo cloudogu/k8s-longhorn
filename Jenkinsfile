@@ -18,29 +18,27 @@ helmChartDir = "${helmTargetDir}/helm"
 
 node('docker') {
     timestamps {
-        catchError {
-            timeout(activity: false, time: 60, unit: 'MINUTES') {
-                stage('Checkout') {
-                    checkout scm
-                    make 'clean'
-                }
-
-                new Docker(this)
-                        .image("golang:${goVersion}")
-                        .mountJenkinsUser()
-                        .inside("--volume ${WORKSPACE}:/${repositoryName} -w /${repositoryName}")
-                                {
-                                    stage('Generate k8s Resources') {
-                                        make 'helm-update-dependencies'
-                                        make 'helm-generate'
-                                        archiveArtifacts "${helmTargetDir}/**/*"
-                                    }
-
-                                    stage("Lint helm") {
-                                        make 'helm-lint'
-                                    }
-                                }
+        timeout(activity: false, time: 60, unit: 'MINUTES') {
+            stage('Checkout') {
+                checkout scm
+                make 'clean'
             }
+
+            new Docker(this)
+                    .image("golang:${goVersion}")
+                    .mountJenkinsUser()
+                    .inside("--volume ${WORKSPACE}:/${repositoryName} -w /${repositoryName}")
+                            {
+                                stage('Generate k8s Resources') {
+                                    make 'helm-update-dependencies'
+                                    make 'helm-generate'
+                                    archiveArtifacts "${helmTargetDir}/**/*"
+                                }
+
+                                stage("Lint helm") {
+                                    make 'helm-lint'
+                                }
+                            }
         }
 
         stageAutomaticRelease()
