@@ -14,8 +14,11 @@ values:
     csiSnapshotter: longhornio/csi-snapshotter:v6.2.1
     csiLivenessProbe: longhornio/livenessprobe:v2.9.0
     csiResizer: longhornio/csi-resizer:v1.7.0
+    removePrivileges: bitnami/kubectl:1.30.6
 patches:
   values.yaml:
+    additionalImages:
+      removePrivileges: "{{ .images.removePrivileges }}"
     longhorn:
       image:
         longhorn:

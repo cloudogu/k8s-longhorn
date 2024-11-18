@@ -14,9 +14,10 @@ update_versions_modify_files() {
 
   # Extract longhorn chart
   local longhornVersion
-  longhornVersion=$(yq '.dependencies[] | select(.name=="longhorn").version' < "k8s/helm/Chart.yaml")
+  longhornVersion=$(./.bin/yq '.dependencies[] | select(.name=="longhorn").version' < "k8s/helm/Chart.yaml")
   local longhornPackage
   longhornPackage="k8s/helm/charts/longhorn-${longhornVersion}.tgz"
+  valuesYAML=k8s/helm/values.yaml
 
   echo "Extract longhorn helm chart"
   tar -zxvf "${longhornPackage}" -C "/tmp" > /dev/null
@@ -35,6 +36,11 @@ update_versions_modify_files() {
   update_component_patch_template ".values.images.csiSnapshotter" ".image.csi.snapshotter"
   update_component_patch_template ".values.images.csiLivenessProbe" ".image.csi.livenessProbe"
   update_component_patch_template ".values.images.csiResizer" ".image.csi.resizer"
+  update_component_patch_template ".values.images.removePrivileges" ".image.removePrivileges"
+
+  local removePrivilegesImage
+  removePrivilegesImage=$(./.bin/yq ".additionalImages.removePrivileges" "${valuesYAML}")
+  ./.bin/yq -i ".values.images.removePrivileges = \"${removePrivilegesImage}\"" "${componentTemplateFile}"
 
   rm -rf ${longhornTempChart}
 }
@@ -43,11 +49,11 @@ update_component_patch_template() {
   local componentTemplateKey="${1}"
   local dependencyValuesKey="${2}"
   local repository
-  repository=$(yq "${dependencyValuesKey}.repository" < ${longhornTempValues})
+  repository=$(./.bin/yq "${dependencyValuesKey}.repository" < ${longhornTempValues})
   local tag
-  tag=$(yq "${dependencyValuesKey}.tag" < ${longhornTempValues})
+  tag=$(./.bin/yq "${dependencyValuesKey}.tag" < ${longhornTempValues})
 
-  yq -i "${componentTemplateKey} = \"${repository}:${tag}\"" "${componentTemplateFile}"
+  ./.bin/yq -i "${componentTemplateKey} = \"${repository}:${tag}\"" "${componentTemplateFile}"
 }
 
 update_versions_stage_modified_files() {

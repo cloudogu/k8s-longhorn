@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.5.1-7] - 2024-11-18
+### Added
+- [#22] Helm hook that deletes an unused ClusterRoleBinding and ServiceAccount after installation/upgrade.
+
 ## [v1.5.1-6] - 2024-10-28
 ### Changed
 - [#20] Use `ces-container-registries` secret for pulling container images as default.
