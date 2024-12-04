@@ -3,7 +3,8 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: longhorn-conversion-webhook
-  namespace: longhorn-system
+  namespace: {{ include "release_namespace" . }}
+  labels: {{- include "longhorn.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
@@ -17,7 +18,7 @@ spec:
     - from:
         - namespaceSelector:
             matchLabels:
-              kubernetes.io/metadata.name: longhorn-system
+              kubernetes.io/metadata.name: {{ include "release_namespace" . }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -38,5 +39,5 @@ spec:
     - from:
         - namespaceSelector:
             matchLabels:
-              kubernetes.io/metadata.name: longhorn-system
+              kubernetes.io/metadata.name: {{ include "release_namespace" . }}
 {{- end }}
