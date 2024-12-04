@@ -32,4 +32,7 @@ spec:
         - podSelector:
             matchLabels:
               app: longhorn-driver-deployer
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: longhorn-system
 {{- end }}

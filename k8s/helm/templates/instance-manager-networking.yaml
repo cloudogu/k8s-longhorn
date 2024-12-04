@@ -24,4 +24,7 @@ spec:
         - podSelector:
             matchLabels:
               longhorn.io/component: backing-image-data-source
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: longhorn-system
 {{- end }}
