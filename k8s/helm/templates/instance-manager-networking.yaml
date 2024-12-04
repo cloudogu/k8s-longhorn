@@ -16,16 +16,25 @@ spec:
         - podSelector:
             matchLabels:
               app: longhorn-manager
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ include "release_namespace" . }}
         - podSelector:
             matchLabels:
               longhorn.io/component: instance-manager
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ include "release_namespace" . }}
         - podSelector:
             matchLabels:
               longhorn.io/component: backing-image-manager
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ include "release_namespace" . }}
         - podSelector:
             matchLabels:
               longhorn.io/component: backing-image-data-source
-        - namespaceSelector:
+          namespaceSelector:
             matchLabels:
-              kubernetes.io/metadata.name: longhorn-system
+              kubernetes.io/metadata.name: {{ include "release_namespace" . }}
 {{- end }}

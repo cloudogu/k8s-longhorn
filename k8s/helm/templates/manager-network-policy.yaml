@@ -16,24 +16,39 @@ spec:
         - podSelector:
             matchLabels:
               app: longhorn-manager
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ include "release_namespace" . }}
         - podSelector:
             matchLabels:
               app: longhorn-ui
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ include "release_namespace" . }}
         - podSelector:
             matchLabels:
               app: longhorn-csi-plugin
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ include "release_namespace" . }}
         - podSelector:
             matchLabels:
               longhorn.io/managed-by: longhorn-manager
             matchExpressions:
               - { key: recurring-job.longhorn.io, operator: Exists }
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ include "release_namespace" . }}
         - podSelector:
             matchExpressions:
               - { key: longhorn.io/job-task, operator: Exists }
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ include "release_namespace" . }}
         - podSelector:
             matchLabels:
               app: longhorn-driver-deployer
-        - namespaceSelector:
+          namespaceSelector:
             matchLabels:
-              kubernetes.io/metadata.name: longhorn-system
+              kubernetes.io/metadata.name: {{ include "release_namespace" . }}
 {{- end }}
