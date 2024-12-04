@@ -36,7 +36,7 @@ spec:
     - ports:
         - protocol: TCP
           port: 9502
-    - from:
+      from:
         - namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: {{ include "release_namespace" . }}
