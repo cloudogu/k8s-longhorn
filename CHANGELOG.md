@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.5.1-9] - 2024-12-05
+### Added
+- [#24] Add value to enable networkPolicies
+- [#24] Add networkPolicy to deny ingress traffic
+
 ## [v1.5.1-8] - 2024-11-18
 ### Fixed
 - Invalid value referenced for image in removePrivileges-job
