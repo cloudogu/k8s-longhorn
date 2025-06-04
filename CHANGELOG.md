@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
-- [#28] Update longhorn to 1.8.1
+- [#28] Update longhorn to 1.9.0
 
 ## [v1.7.3-1] - 2025-04-03
 ### Changed

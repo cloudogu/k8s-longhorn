@@ -1,20 +1,20 @@
 apiVersion: v1
 values:
   images:
-    engine: longhornio/longhorn-engine:v1.8.1
-    manager: longhornio/longhorn-manager:v1.8.1
-    ui: longhornio/longhorn-ui:v1.8.1
-    instanceManager: longhornio/longhorn-instance-manager:v1.8.1
-    shareManager: longhornio/longhorn-share-manager:v1.8.1
-    backingImageManager: longhornio/backing-image-manager:v1.8.1
-    supportBundleKit: longhornio/support-bundle-kit:v0.0.52
+    engine: longhornio/longhorn-engine:v1.9.0
+    manager: longhornio/longhorn-manager:v1.9.0
+    ui: longhornio/longhorn-ui:v1.9.0
+    instanceManager: longhornio/longhorn-instance-manager:v1.9.0
+    shareManager: longhornio/longhorn-share-manager:v1.9.0
+    backingImageManager: longhornio/backing-image-manager:v1.9.0
+    supportBundleKit: longhornio/support-bundle-kit:v0.0.55
     csiAttacher: longhornio/csi-attacher:v4.8.1
     csiProvisioner: longhornio/csi-provisioner:v5.2.0
     csiNodeDriverRegistrar: longhornio/csi-node-driver-registrar:v2.13.0
     csiResizer: longhornio/csi-resizer:v1.13.2
     csiSnapshotter: longhornio/csi-snapshotter:v8.2.0
     csiLivenessProbe: longhornio/livenessprobe:v2.15.0
-    removePrivileges: bitnami/kubectl:1.30.6
+    removePrivileges: bitnami/kubectl:1.33.1
 patches:
   values.yaml:
     additionalImages:
