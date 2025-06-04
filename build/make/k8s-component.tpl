@@ -10,9 +10,3 @@ metadata:
 spec:
   name: NAME
   namespace: NAMESPACE
-  version: VERSION
-  valuesYamlOverwrite: |
-    longhorn:
-      defaultSettings:
-        backupTarget: "s3://longhorn@dummyregion/"
-        backupTargetCredentialSecret: longhorn-backup-target
