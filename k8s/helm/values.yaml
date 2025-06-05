@@ -3,13 +3,14 @@ longhorn:
   privateRegistry:
     registrySecret: ces-container-registries
   defaultSettings:
+    nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
+    deletingConfirmationFlag: true
+  defaultBackupStore:
     # backupTarget specifies the bucket where the backup will be stored.
     backupTarget: ~
     backupTargetCredentialSecret: ~
-    nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
-    deletingConfirmationFlag: true
 additionalImages:
-  removePrivileges: bitnami/kubectl:1.30.6
+  removePrivileges: bitnami/kubectl:1.33.1
 
 networkPolicies:
   enabled: true
