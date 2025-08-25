@@ -14,7 +14,7 @@ values:
     csiResizer: longhornio/csi-resizer:v1.13.2
     csiSnapshotter: longhornio/csi-snapshotter:v8.2.0
     csiLivenessProbe: longhornio/livenessprobe:v2.15.0
-    removePrivileges: bitnami/kubectl:1.33.1
+    removePrivileges: bitnamilegacy/kubectl:1.33.4
 patches:
   values.yaml:
     additionalImages:
