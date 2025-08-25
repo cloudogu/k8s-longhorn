@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.9.0-3] - 2025-08-25
+### Changed
+- [#33] Move to bitnamilegacy kubectl image
+
 ## [v1.9.0-2] - 2025-07-17
 ### Changed
 - [#31] Update Makefiles to 10.2.0
