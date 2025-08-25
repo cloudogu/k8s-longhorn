@@ -12,7 +12,7 @@ longhorn:
     backupTarget: ~
     backupTargetCredentialSecret: ~
 additionalImages:
-  removePrivileges: bitnami/kubectl:1.33.1
+  removePrivileges: bitnamilegacy/kubectl:1.33.4
 
 networkPolicies:
   enabled: true
